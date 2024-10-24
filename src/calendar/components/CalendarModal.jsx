@@ -60,14 +60,14 @@ export const CalendarModal = () => {
   }, [ activeEvent ])
   
 
-  const onInputChange = ({ target }) => {
+  const onInputChanged = ({ target }) => {
     setFormValues({
       ...formValues,
       [ target.name ]: target.value
     })
   }
 
-  const onDateChange = ( event, changing ) => {
+  const onDateChanged = ( event, changing ) => {
     setFormValues({
       ...formValues,
       [ changing ]: event
@@ -75,7 +75,6 @@ export const CalendarModal = () => {
   }
 
   const onCloseModal = () => {
-    // console.log('Cerrando Modal')
     closeDateModal();
   }
 
@@ -93,9 +92,8 @@ export const CalendarModal = () => {
 
     if ( formValues.title.length <= 0 ) return
 
-    // console.log(formValues)
-
     // TODO:
+
     await startSavingEvent( formValues )
     closeDateModal();
     setFormSubmitted( false );
@@ -121,7 +119,7 @@ export const CalendarModal = () => {
             selected={ formValues.start }
             onChange={ 
               ( event ) => {
-                onDateChange( event, 'start' )
+                onDateChanged( event, 'start' )
               }
             }
             className="form-control"
@@ -138,7 +136,7 @@ export const CalendarModal = () => {
             selected={ formValues.end }
             onChange={ 
               ( event ) => {
-                onDateChange( event, 'end' )
+                onDateChanged( event, 'end' )
               }
             }
             className="form-control"
@@ -158,7 +156,7 @@ export const CalendarModal = () => {
             name="title"
             autoComplete="off"
             value={ formValues.title }
-            onChange={ onInputChange }
+            onChange={ onInputChanged }
           />
             <small id="emailHelp" className="form-text text-muted">Una descripción corta</small>
         </div>
@@ -170,7 +168,7 @@ export const CalendarModal = () => {
             rows="5"
             name="notes"
             value={ formValues.notes }
-            onChange={ onInputChange }
+            onChange={ onInputChanged }
             ></textarea>
             <small id="emailHelp" className="form-text text-muted">Información adicional</small>
         </div>
