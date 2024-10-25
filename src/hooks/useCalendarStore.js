@@ -1,7 +1,8 @@
 import { useDispatch, useSelector } from "react-redux"
-import { onAddNewEvent, onDeleteEvent, onSetActiveEvent, onUpdateEvent } from "../store"
+import { onAddNewEvent, onDeleteEvent, onLoadEvents, onSetActiveEvent, onUpdateEvent } from "../store"
 import { calendarApi } from "../api";
 import { convertEventsToDateEvents } from "../helpers";
+import Swal from "sweetalert2";
 
 
 export const useCalendarStore = () => {
@@ -16,21 +17,33 @@ export const useCalendarStore = () => {
 
   const startSavingEvent = async( calendarEvent ) => {
 
-    // TODO: Update Event
-    if ( calendarEvent._id ) {
-      // Actualizando
-      dispatch( onUpdateEvent({ ...calendarEvent }) );
-    } else {
-      // Creando
-      const { data } = await calendarApi.post('/events', calendarEvent);
-      console.log({data})
+    try {
 
+      if ( calendarEvent._id ) {
+  
+        const { __v, _id, user, ...eventWithoutMeta } = calendarEvent;
+  
+        await calendarApi.patch(`/events/${calendarEvent._id}`, eventWithoutMeta);
+        dispatch(onUpdateEvent({ ...eventWithoutMeta, user }));
+        startLoadingEvents();
+  
+        return;
+  
+      }
+  
+      const { data } = await calendarApi.post('/events', calendarEvent);
       dispatch( onAddNewEvent({ ...calendarEvent, id: data.event._doc._id, user: user }) );
+    } catch (error) {
+      console.log(error);
+      Swal.fire('Error al guardar', error.response.data.msg, 'error');
     }
+
   }
 
   const startDeletingEvent = async() => {
-    // TODO: llegar al backend
+
+    await calendarApi.delete(`/events/${ activeEvent._id }`)
+
     dispatch( onDeleteEvent() );
   }
 
@@ -41,9 +54,11 @@ export const useCalendarStore = () => {
       const { data } = await calendarApi.get('/events');
       const eventsArray = Object.values(data.events);
       const events = convertEventsToDateEvents( eventsArray );
+      dispatch( onLoadEvents( events ) )
 
     } catch (error) {
       console.log(error)
+      Swal.fire('Error al eliminar', error.response.data.msg, 'error');
     }
 
   }
