@@ -32,12 +32,10 @@ export const CalendarPage = () => {
   }
 
   const onDoubleClick = ( event ) => {
-    // console.log({ doubleClick: event })
     openDateModal();
   }
 
   const onSelect = ( event ) => {
-    // console.log({ click: event })
     setActiveEvent( event )
   }
 
