@@ -26,7 +26,7 @@ export const useCalendarStore = () => {
         await calendarApi.patch(`/events/${calendarEvent._id}`, eventWithoutMeta);
         dispatch(onUpdateEvent({ ...eventWithoutMeta, user }));
         startLoadingEvents();
-  
+
         return;
   
       }
